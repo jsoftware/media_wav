@@ -1,0 +1,18 @@
+media/wav - change history
+
+== 1.0.7 ==
+ * chg: j602
+
+== 1.0.6 ==
+ * chg: media/wav folder
+
+== 1.0.5 ==
+ * add: big-endian
+ * chg: wavmakenote
+
+== 1.0.4 ==
+ * add: code doc
+
+== 1.0.1 ==
+ * add: sound/wav
+ 

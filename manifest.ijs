@@ -11,9 +11,9 @@ Copyright 2006 (C) Oleg Kobchenko
 
 LABCATEGORY=: 'Sound'
 
-VERSION=: '1.0.6'
+VERSION=: '1.0.7'
 
-RELEASE=: 'j601'
+RELEASE=: 'j601 j602'
 
 FILES=: 0 : 0
 wav.ijs
