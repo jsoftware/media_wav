@@ -89,12 +89,16 @@ wavhead=: 3 : 0
          chunkSize2    =: {. int y ss~ oimov 4
 )
 
+NB.*wavdata v WAVE data from noun
+NB.   y:  wave format
 wavdata=: 3 : 0
   wavhead y
   f=. ]`byt`sht`int@.(bitsPerSample <.@% 8)
          data          =:    f   y ss~ oimov chunkSize2
 )
 
+NB.*wavinfo v WAVE info from noun
+NB.   y:  wave format
 wavinfo=: 3 : 0
   wavhead y
   r=.      'File Type       ',chunk
@@ -105,6 +109,25 @@ wavinfo=: 3 : 0
   r=. r,LF,'Bits per Sample ',":bitsPerSample
 )
 
+NB.*wavfile v WAVE info or data from file
+NB.   y:  wav file
+NB.   x:  0-info 1-head 2-data
+wavfile=: 3 : 0
+  0 wavfile y
+:
+  require 'jmf'
+  r=. ''
+  JCHAR map_jmf_ 'WAVE_pwav_';y;'';1  NB. readonly
+  try.
+    select. x
+    case. 1 do. r=. wavhead WAVE_pwav_
+    case. 2 do. r=. wavdata WAVE_pwav_
+    case.   do. r=. wavinfo WAVE_pwav_
+    end.
+  catch. 0 end.
+  unmap_jmf_ 'WAVE_pwav_'
+  r
+)
 
 NB. =========================================================
 wavplay_z_=: wavplay_pwav_
@@ -114,6 +137,7 @@ wavnote_z_=: wavnote_pwav_
 wavhead_z_=: wavhead_pwav_
 wavdata_z_=: wavdata_pwav_
 wavinfo_z_=: wavinfo_pwav_
+wavfile_z_=: wavfile_pwav_
 
 
 NB. =========================================================
@@ -157,4 +181,8 @@ Note 'Test reading waves'
   W=. fread jpath '~addons/media/wav/test2.wav'
   wavinfo W
   plot wavdata W
+
+  wavfile jpath '~addons/media/wav/test1.wav'
+  wavfile jpath '~addons/media/wav/test2.wav'
+  plot 2 wavfile jpath '~addons/media/wav/test1.wav'
 )

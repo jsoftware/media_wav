@@ -1,5 +1,8 @@
 media/wav - change history
 
+== 1.0.9 ==
+ * add: wavfile using jmf
+
 == 1.0.8 ==
  * add: reading PCM wave format
 
