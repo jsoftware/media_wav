@@ -11,12 +11,12 @@ getsysdata=: 3 : ' ''mx my mw mh ml mr mc ms''=: 8{.0".sysdata'
 
 F=: 0 : 0
 pc f;
-xywh 4 4 360 60;cc lens isigraph rightmove;
-xywh 4 68 360 128;cc part isigraph rightmove bottommove;
-xywh 4 198 213 10;cc info static topmove rightmove bottommove;cn "Info";
 xywh 294 197 70 12;cc zoom trackbar tbs_both leftmove topmove rightmove bottommove;
 xywh 270 197 25 11;cc fix checkbox leftmove topmove rightmove bottommove;cn "Fix";
+xywh 4 198 213 10;cc info static topmove rightmove bottommove;cn "Info";
 xywh 230 198 37 10;cc status static leftmove topmove rightmove bottommove;cn "Status";
+xywh 4 4 360 60;cc lens isigraph rightmove;
+xywh 4 68 360 128;cc part isigraph rightmove bottommove;
 pas 4 2;pcenter;
 rem form end;
 )
