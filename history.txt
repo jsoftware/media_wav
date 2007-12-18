@@ -1,5 +1,8 @@
 media/wav - change history
 
+== 1.0.10 ==
+ * add: wavview, zoom wave form viewer
+
 == 1.0.9 ==
  * add: wavfile using jmf
 
