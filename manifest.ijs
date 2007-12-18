@@ -11,7 +11,7 @@ Copyright 2006 (C) Oleg Kobchenko
 
 LABCATEGORY=: 'Sound'
 
-VERSION=: '1.0.12'
+VERSION=: '1.0.13'
 
 RELEASE=: 'j601 j602'
 
