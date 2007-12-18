@@ -59,42 +59,50 @@ NB. reading PCM wave files
 
 ic=: 3!:4             NB. integer conversion
 int=: _2&ic
+i24=: _1&ic
 sht=: _1&ic
 byt=: a.&i.
-ss=: ,:@[ ];.0 ]      NB. sub-string
+substr=: ,."1@[ ];.0 ]
 
 oibeg=: 3 : 'OFFS=: 0'  NB. offset iterator
 oimov=: 3 : 'y,~y-~OFFS=: OFFS+y'
 
 wavhead=: 3 : 0
   oibeg''
-         chunk         =:        y ss~ oimov 4
+         chunk         =:        y substr~ oimov 4
   assert chunk         -: 'RIFF'
-         chunkSize     =: {. int y ss~ oimov 4
-         format        =:        y ss~ oimov 4
+         chunkSize     =: {. int y substr~ oimov 4
+         format        =:        y substr~ oimov 4
   assert format        -: 'WAVE'
 
-         subChunk1     =:        y ss~ oimov 4
-         chunkSize1    =: {. int y ss~ oimov 4
-         format1       =: {. sht y ss~ oimov 2
+         subChunk1     =:        y substr~ oimov 4
+         chunkSize1    =: {. int y substr~ oimov 4
+         format1       =: {. sht y substr~ oimov 2
   assert format1       -: 1
 
-         chanels       =: {. sht y ss~ oimov 2
-         sampleRate    =: {. int y ss~ oimov 4
-         byteRate      =: {. int y ss~ oimov 4
-         blockAlign    =: {. sht y ss~ oimov 2
-         bitsPerSample =: {. sht y ss~ oimov 2
+         chanels       =: {. sht y substr~ oimov 2
+         sampleRate    =: {. int y substr~ oimov 4
+         byteRate      =: {. int y substr~ oimov 4
+         blockAlign    =: {. sht y substr~ oimov 2
+         bitsPerSample =: {. sht y substr~ oimov 2
 
-         subChunk2     =:        y ss~ oimov 4
-         chunkSize2    =: {. int y ss~ oimov 4
+         subChunk2     =:        y substr~ oimov 4
+         chunkSize2    =: {. int y substr~ oimov 4
+
+         sampleSize    =: (bitsPerSample <.@% 8) { 1 1 2 3 4
+         sampleCount   =: chunkSize2 <.@% sampleSize
 )
 
 NB.*wavdata v WAVE data from noun
 NB.   y:  wave format
 wavdata=: 3 : 0
+  '' wavdata y
+:
   wavhead y
-  f=. ]`byt`sht`int@.(bitsPerSample <.@% 8)
-         data          =:    f   y ss~ oimov chunkSize2
+  n=. oimov chunkSize2
+  if. #x do. n=. (x*sampleSize) +"1 ({.n),0 end.
+  f=. ]`byt`sht`i24`int@.sampleSize
+  data=: f , n substr y
 )
 
 NB.*wavinfo v WAVE info from noun
@@ -106,6 +114,7 @@ wavinfo=: 3 : 0
   r=. r,LF,'File Format     ',format
   r=. r,LF,'Channels        ',":chanels
   r=. r,LF,'Sample Rate     ',":sampleRate
+  r=. r,LF,'Sample Count    ',":sampleCount
   r=. r,LF,'Bits per Sample ',":bitsPerSample
 )
 
@@ -118,13 +127,14 @@ wavfile=: 3 : 0
   require 'jmf'
   r=. ''
   JCHAR map_jmf_ 'WAVE_pwav_';y;'';1  NB. readonly
+  'fn nx'=. 2{.boxopen x
   try.
-    select. x
-    case. 1 do. r=. wavhead WAVE_pwav_
-    case. 2 do. r=. wavdata WAVE_pwav_
-    case.   do. r=. wavinfo WAVE_pwav_
+    select. fn
+    case. 1 do. r=.    wavhead WAVE_pwav_
+    case. 2 do. r=. nx wavdata WAVE_pwav_
+    case.   do. r=.    wavinfo WAVE_pwav_
     end.
-  catch. 0 end.
+  catchd. 0 end.
   unmap_jmf_ 'WAVE_pwav_'
   r
 )

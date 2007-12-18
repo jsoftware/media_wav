@@ -1,5 +1,9 @@
 media/wav - change history
 
+== 1.0.12 ==
+ * add: viewer, stand-alone application run from explorer
+ * chg: wavview, use mapped files for reading subsets
+
 == 1.0.10 ==
  * add: wavview, zoom wave form viewer
 
