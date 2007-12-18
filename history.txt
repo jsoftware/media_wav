@@ -1,5 +1,8 @@
 media/wav - change history
 
+== 1.0.14 ==
+ * add: viewer, pan in the detail view with mouse
+
 == 1.0.12 ==
  * add: viewer, stand-alone application run from explorer
  * chg: wavview, use mapped files for reading subsets

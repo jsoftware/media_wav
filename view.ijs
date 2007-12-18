@@ -7,6 +7,7 @@ coinsert 'jgl2'
 TITLE=: 'Wave Form Viewer'
 LENSFACT=: 8
 substr=: ,."1@[ ];.0 ]
+getsysdata=: 3 : ' ''mx my mw mh ml mr mc ms''=: 8{.0".sysdata'
 
 F=: 0 : 0
 pc f;
@@ -27,6 +28,7 @@ create=: 3 : 0
   LW=: 720
   fix=: '1'
   zoom=: '50'
+  SBEGIN=: ''
 
   wd 'pn *',y,' - ',TITLE
   wd 'set zoom 1 ',zoom,' 100 10 1'
@@ -60,16 +62,31 @@ f_lens_paint=: 3 : 0
   if. LW~:{.glqwh '' do. update'' else. pd__lens 'show' end.
 )
 
-getsysdata=: 3 : ' ''mx my mw mh ml mr mc ms''=: 8{.0".sysdata'
-
 f_lens_mmove=: (3 : 0)@getsysdata
   if. -.ml do. return. end.
-  POS=: <.((0".zoom)-~COUNT)*mx%mw
+  POS=: 0>.1<.mx%mw
   update''
 )
 
 f_part_paint=: 3 : 0
   pd__part 'show'
+)
+
+f_part_mbldown=: (3 : 0)@getsysdata
+  SBEGIN=: mx
+  SPOS=: POS
+  glcapture 1
+)
+
+f_part_mblup=: (3 : 0)@getsysdata
+  glcapture 0
+  SBEGIN=: ''
+)
+
+f_part_mmove=: (3 : 0)@getsysdata
+  if. 0=#SBEGIN do. return. end.
+  POS=: 0>.1<.SPOS+(SCNT%COUNT)*(SBEGIN-mx)%mw
+  update''
 )
 
 f_zoom_button=: update
@@ -85,7 +102,8 @@ init=: 3 : 0
 )
 
 update=: 3 : 0
-  sel=. POS,<.10*2^0.1*0".zoom
+  SCNT=: <.10*2^0.1*0".zoom
+  sel=. (<.POS*COUNT-SCNT),SCNT
   glsel 'lens'
   'LW LH'=: glqwh ''
   lndex=. <.COUNT*(i.%]) LW * LENSFACT
