@@ -13,8 +13,8 @@ PlaySound=: 'winmm PlaySoundA > i *c i i'&cd
 'SND_SYNC SND_ASYNC SND_MEMORY SND_LOOP SND_PURGE SND_ALIAS'=: 0 1 4 8 64 65536
 
 NB.*wavplay v plays wav from file or memory
-NB.   y:  wav file or char vector of wav format
-NB.   x:  SND_* flags, SND_SYNC default, see wav.ijs for details
+NB.   y  wav file or char vector of wav format
+NB.  [x] SND_* flags, SND_SYNC default, see wav.ijs for details
 wavplay=: SND_SYNC&$: : (4 : 0)
   PlaySound y;0;x
 )
@@ -26,9 +26,9 @@ BIGEND=. ({.a.)={.1(3!:4)1
 RATE=: 11000
 
 NB.*wavmake v wav format from samples
-NB.   y:  samples vector or (2,N)=$y matrix for stereo
+NB.   y  samples vector or (2,N)=$y matrix for stereo
 NB.       range is 0..255 or _32768..32767
-NB.   x:  sample rate in Hz, RATE default of 11000
+NB.  [x] sample rate in Hz, RATE default of 11000
 wavmake=: 3 : 0
   RATE wavmake y               NB. x: sample rate, eg 11 kHz
 :
@@ -49,8 +49,8 @@ NB.*wavmakenote v make wav format from musical notes
 wavmakenote=: [: wavmake ;@(<@note freq)
 
 NB.*wavnote v plays musical notes
-NB.   y:  tones 0=C, 1=C#, 2=D of main octave
-NB.   x:  durations in sec, 0.25 default of 1/4 sec
+NB.   y  tones 0=C, 1=C#, 2=D of main octave
+NB.  [x] durations in sec, 0.25 default of 1/4 sec
 wavnote=: 4 wavplay wavmakenote
 
 
@@ -58,9 +58,10 @@ NB. =========================================================
 NB. reading PCM wave files
 
 ic=: 3!:4             NB. integer conversion
-int=: _2&ic
-i24=: _1&ic
-sht=: _1&ic
+bigEnd=: 2 : 'u`v@.(1=_1 ic 0 1{a.)'
+int=: _2&ic  bigEnd  ( _2 ic [: , _4 |.\ ] )
+i24=: (_2 ic [: , (0{a.) ,.~ _3 ]\ ])  bigEnd  ( _2 ic [: , (0{a.) ,. _3 |.\ ] )
+sht=: _1&ic  bigEnd  ( _1 ic [: , _4 |.\ ] )
 byt=: a.&i.
 substr=: ,."1@[ ];.0 ]
 
@@ -86,15 +87,20 @@ wavhead=: 3 : 0
          blockAlign    =: {. sht y substr~ oimov 2
          bitsPerSample =: {. sht y substr~ oimov 2
 
+         aux=: ''
+  while. OFFS<#y do.
          subChunk2     =:        y substr~ oimov 4
          chunkSize2    =: {. int y substr~ oimov 4
-
+    if. 'data'-:subChunk2 do. break. end.
+         aux=: aux,<             y substr~ oimov chunkSize2
+  end.
          sampleSize    =: (bitsPerSample <.@% 8) { 1 1 2 3 4
          sampleCount   =: chunkSize2 <.@% sampleSize
 )
 
 NB.*wavdata v WAVE data from noun
-NB.   y:  wave format
+NB.   y  wave format
+NB.  [x] samples: (index,count)[, .. ,:index,count]
 wavdata=: 3 : 0
   '' wavdata y
 :
@@ -106,7 +112,7 @@ wavdata=: 3 : 0
 )
 
 NB.*wavinfo v WAVE info from noun
-NB.   y:  wave format
+NB.   y  wave format
 wavinfo=: 3 : 0
   wavhead y
   r=.      'File Type       ',chunk
@@ -119,8 +125,10 @@ wavinfo=: 3 : 0
 )
 
 NB.*wavfile v WAVE info or data from file
-NB.   y:  wav file
-NB.   x:  0-info 1-head 2-data
+NB.   y  wav file
+NB.  [x] what[;samples]
+NB.      what:    0-info 1-head 2-data
+NB.      samples: see wavdata
 wavfile=: 3 : 0
   0 wavfile y
 :

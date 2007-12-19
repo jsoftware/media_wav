@@ -1,5 +1,9 @@
 media/wav - change history
 
+== 1.0.16 ==
+ * add: wav, big-endian platforms support
+ * add: wav, skip Exif etc. preambles
+
 == 1.0.14 ==
  * add: viewer, pan in the detail view with mouse
 

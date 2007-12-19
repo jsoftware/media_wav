@@ -11,15 +11,19 @@ Copyright 2006 (C) Oleg Kobchenko
 
 LABCATEGORY=: 'Sound'
 
-VERSION=: '1.0.15'
+VERSION=: '1.0.16'
 
 RELEASE=: 'j601 j602'
 
 FILES=: 0 : 0
+history.txt
 view.ijs
 viewer.ijs
-viewer.reg
 wav.ijs
 test1.wav
 test2.wav
+)
+
+FILESWIN=: 0 : 0
+viewer.reg
 )
