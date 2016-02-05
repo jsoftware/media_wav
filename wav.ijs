@@ -8,7 +8,7 @@ coclass 'pwav'
 
 NB. =========================================================
 NB. playing wave files
-PlaySound=: 'winmm PlaySoundA > i *c i i'&cd
+PlaySound=: 'winmm PlaySoundA > x *c x x'&cd
 
 'SND_SYNC SND_ASYNC SND_MEMORY SND_LOOP SND_PURGE SND_ALIAS'=: 0 1 4 8 64 65536
 
@@ -160,7 +160,7 @@ wavfile_z_=: wavfile_pwav_
 
 NB. =========================================================
 Note 'Test playing and making waves'
-scriptdoc 'media/wav'
+load 'media/wav'
 
 wavplay jpath'~addons/media/wav/test1.wav'
 1 wavplay jpath'~addons/media/wav/test1.wav'      NB. async
@@ -168,9 +168,9 @@ wavplay jpath'~addons/media/wav/test1.wav'
 64 wavplay <0                                     NB. stop
 
 load 'files'
-(wavmake i.100) fwrite jpath'~addons/media/wav/test2.wav'
-(wavmake 1000?@$200) fwrite jpath'~addons/media/wav/test3.wav'
-(wavmake ,~^:6 i.200) fwrite jpath'~addons/media/wav/test4.wav'
+(wavmake i.100) fwrite jpath'~temp/test2.wav'
+(wavmake 1000?@$200) fwrite jpath'~temp/test3.wav'
+(wavmake ,~^:6 i.200) fwrite jpath'~temp/test4.wav'
 
 4 wavplay 2000 wavmake 1000?@$200              NB. memory
 4 wavplay wavmake <.255*(%>./)(-<./) 1 o.440*    2p1*(i.%<:) RATE_pwav_
@@ -183,7 +183,7 @@ load 'files'
 joy=.     11 11 12 14  14 12 11 9  7 7 9 11  11 9 9 9
 joy=. joy,11 11 12 14  14 12 11 9  7 7 9 11  9  7 7 7
 0.35 wavnote joy
-(0.35 wavmakenote joy) fwrite jpath'~addons/media/wav/joy.wav'
+(0.35 wavmakenote joy) fwrite jpath'~temp/joy.wav'
 
 <.0.5+freq_pwav_+i.12  NB. main octave
 load 'plot'

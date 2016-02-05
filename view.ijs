@@ -7,22 +7,23 @@ coinsert 'jgl2'
 TITLE=: 'Wave Form Viewer'
 LENSFACT=: 8
 substr=: ,."1@[ ];.0 ]
-getsysdata=: 3 : ' ''mx my mw mh ml mr mc ms''=: 8{.0".sysdata'
+getsysdata=: 3 : ' ''mx my mw mh ml''=: 5{.0".sysdata'
 
-F=: 0 : 0
-pc f;
-xywh 294 197 70 12;cc zoom trackbar tbs_both leftmove topmove rightmove bottommove;
-xywh 267 197 25 11;cc fix checkbox leftmove topmove rightmove bottommove;cn "Fix";
-xywh 4 198 219 10;cc info static topmove rightmove bottommove;cn "Info";
-xywh 226 198 37 10;cc status static leftmove topmove rightmove bottommove;cn "Status";
-xywh 4 4 360 60;cc lens isigraph rightmove;
-xywh 4 68 360 128;cc part isigraph rightmove bottommove;
-pas 4 2;pcenter;
-rem form end;
+FT=: 0 : 0
+pc ft;
+minwh 310 150;cc lens isigraph flush;
+minwh 310 150;cc part isigraph flush;
+bin h;
+cc fix checkbox;cn "Fix";
+cc zoom slider 0 0 1 10 100 50;
+bin zh;
+cc info static;cn "Info";
+cc status static;cn "Status";
+bin z;
 )
 
 create=: 3 : 0
-  wd F
+  wd FT
   DATA=: FILE=: ''
   POS=: 0
   LW=: 720
@@ -30,20 +31,12 @@ create=: 3 : 0
   zoom=: '50'
   SBEGIN=: ''
 
-  wd 'pn *',y,' - ',TITLE
-  wd 'set zoom 1 ',zoom,' 100 10 1'
-  wd 'set fix ',fix
+  wd 'pn ',y,' - ',TITLE
+  wd 'set fix value ',fix
   wd 'pshow;'
   
-  lens=: conew 'jzplot'
-  PForm__lens=: 'myplot'
-  PFormhwnd__lens=: wd 'qhwndp'
-  PId__lens=: 'lens'
-  
-  part=: conew 'jzplot'
-  PForm__part=: 'myplot'
-  PFormhwnd__part=: wd 'qhwndp'
-  PId__part=: 'part'
+  lens=: ('ft';'lens') conew 'jzplot'
+  part=: ('ft';'part') conew 'jzplot'
   
   init y
   update''
@@ -56,42 +49,39 @@ destroy=: 3 : 0
   codestroy ''
 )
 
-f_close=: destroy
+ft_close=: destroy
+ft_cancel=: f_close
 
-f_lens_paint=: 3 : 0
-  if. LW~:{.glqwh '' do. update'' else. pd__lens 'show' end.
+ft_lens_paint=: 3 : 0
+  if. LW~:{.glqwh '' do.
+    update''
+  end.
 )
 
-f_lens_mmove=: (3 : 0)@getsysdata
+ft_lens_mmove=: (3 : 0)@getsysdata
   if. -.ml do. return. end.
   POS=: 0>.1<.mx%mw
   update''
 )
 
-f_part_paint=: 3 : 0
-  pd__part 'show'
-)
-
-f_part_mbldown=: (3 : 0)@getsysdata
+ft_part_mbldown=: (3 : 0)@getsysdata
   SBEGIN=: mx
   SPOS=: POS
-  glcapture 1
 )
 
-f_part_mblup=: (3 : 0)@getsysdata
-  glcapture 0
+ft_part_mblup=: (3 : 0)@getsysdata
   SBEGIN=: ''
 )
 
-f_part_mmove=: (3 : 0)@getsysdata
+ft_part_mmove=: (3 : 0)@getsysdata
   if. 0=#SBEGIN do. return. end.
   POS=: 0>.1<.SPOS+(SCNT%COUNT)*(SBEGIN-mx)%mw
   update''
 )
 
-f_zoom_button=: update
+ft_zoom_changed=: update
 
-f_fix_button=: update
+ft_fix_button=: update
 
 init=: 3 : 0
   FILE=: y
@@ -125,14 +115,14 @@ update=: 3 : 0
   pd__part stime;sdata
   pd__part 'show'
 
-  wd 'set status *',(0j3":tt),'s'
+  wd 'set status text *',(0j3":tt),'s'
 )
 
 set_info=: 3 : 0
   s=.   'Rate ',(":sampleRate_pwav_%1000),' kHz, '
   s=. s,'',(":bitsPerSample_pwav_),' Bit/sample, '
   s=. s,'',(":chanels_pwav_),' Channel(s) '
-  wd 'set info *',s
+  wd 'set info text *',s
 )
 
 wavview=: 'pwavview' conew~ jpath
