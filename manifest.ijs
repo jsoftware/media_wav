@@ -11,9 +11,9 @@ Copyright 2006 (C) Oleg Kobchenko
 
 LABCATEGORY=: 'Sound'
 
-VERSION=: '1.0.17'
+VERSION=: '1.0.18'
 
-RELEASE=: 'j804'
+RELEASE=: 'j804 j805'
 
 FILES=: 0 : 0
 history.txt
