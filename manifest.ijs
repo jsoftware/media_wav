@@ -13,7 +13,9 @@ LABCATEGORY=: 'Sound'
 
 VERSION=: '1.0.20'
 
-RELEASE=: 'j804 j805 j806 j807'
+RELEASE=: ''
+
+FOLDER=: 'media/wav'
 
 FILES=: 0 : 0
 history.txt
